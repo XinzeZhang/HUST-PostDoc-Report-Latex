@@ -39,6 +39,37 @@ xelatex main
 
 中文字体来自 Google Fonts 的 [Noto Serif SC](https://github.com/google/fonts/tree/main/ofl/notoserifsc) 和 [Noto Sans SC](https://github.com/google/fonts/tree/main/ofl/notosanssc)；仓库内文件由其可变字体生成 400、700 两个静态字重，对应的 SIL Open Font License 文本保存在 `fonts/` 中。
 
+
+## 替换为宋体、黑体和 Times New Roman
+
+如果已经合法获取宋体、黑体和 Times New Roman 字体，可按以下方式替换默认字体。操作前建议先备份 `HUSTthesis.cls`；示例仅修改本项目的字体配置，不需要删除默认的 Noto 字体。
+
+1. 将三个字体文件复制到项目根目录的 `fonts/`。下面以 `SimSun.ttf`（宋体）、`SimHei.ttf`（黑体）和 `TimesNewRoman.ttf`（Times New Roman 常规体）为示例；文件名仅作示范，应与实际文件名及大小写完全一致。文件可以改用其他目录，但需要同步修改下面的 `Path=fonts/`，其路径相对于编译时的项目根目录。
+2. 打开项目根目录的 `HUSTthesis.cls`，找到以“公开版使用 OFL 授权的 Noto 中文字体”开头的字体设置，将从 `\setCJKmainfont` 到 `\newfontfamily\sunum` 的整段配置替换为：
+
+   ```latex
+   % 中文正文：宋体；中文标题：黑体。
+   \setCJKmainfont[Path=fonts/,AutoFakeBold=2.25,AutoFakeSlant=0.2]{SimSun.ttf}
+   \setCJKsansfont[Path=fonts/,AutoFakeBold=2.25]{SimHei.ttf}
+   \setCJKmonofont[Path=fonts/,AutoFakeBold=2.25]{SimSun.ttf}
+   \setCJKfamilyfont{zhongsong}[Path=fonts/,AutoFakeBold=2.25]{SimSun.ttf}
+   \setCJKfamilyfont{song}[Path=fonts/,AutoFakeBold=2.25]{SimSun.ttf}
+   \setCJKfamilyfont{hei}[Path=fonts/,AutoFakeBold=2.25]{SimHei.ttf}
+   \setCJKfamilyfont{kai}[Path=fonts/,AutoFakeSlant=0.2]{SimSun.ttf}
+   \setCJKfamilyfont{fs}[Path=fonts/]{SimSun.ttf}
+
+   % 西文：Times New Roman；封面日期中的数字：宋体。
+   \setmainfont[Path=fonts/,AutoFakeBold=2.0,AutoFakeSlant=0.2]{TimesNewRoman.ttf}
+   \newfontfamily\sunum[Path=fonts/]{SimSun.ttf}
+   ```
+
+3. 如果实际字体是 `.otf` 文件，请把代码中的文件名和扩展名同步改为实际值；`.ttc` 是字体集合，可能需要为相应字体设置 `FontIndex`，不能仅把扩展名改为 `.ttf`。如果已安装 Times New Roman，也可以不用复制西文字体文件，将 `\setmainfont` 一行替换为 `\setmainfont{Times New Roman}`；此时编译环境必须能按该名称找到字体。
+4. 按上面的 XeLaTeX + BibTeX 流程重新编译，并检查封面、声明页、正文、公式和参考文献。如果报错提示找不到字体，请先检查文件名、扩展名、大小写、`Path` 和当前工作目录。
+
+这份配置只依赖三种字体：声明标题的华文中宋、楷体和仿宋暂用宋体或其人工粗体／斜体近似，**并非对应的真实字体**；Times New Roman 也在缺少独立粗体和斜体文件时使用人工粗体／斜体。如果另有获授权的华文中宋、楷体、仿宋或 Times New Roman 粗体、斜体文件，可分别调整对应的 `\setCJKfamilyfont`，或在 `\setmainfont` 中通过 `BoldFont`、`ItalicFont`、`BoldItalicFont` 指定实际文件。替换后字形、换行和分页可能变化，请对照学校现行要求检查。
+
+**字体授权：** 字体可在本地使用不一定代表允许公开分发。请勿在未经授权的情况下将宋体、黑体或 Times New Roman 文件提交到公开仓库；可将个人字体路径加入 `.gitignore`，并在提交前用 `git status --short` 检查。
+
 ## 来源、感谢与许可
 
 本项目基于 [华中科技大学博士学位论文 LaTeX 模板 HUST-PhD-Thesis-Latex](https://github.com/XinzeZhang/HUST-PhD-Thesis-Latex) 的 V3.2.0.X 改编，感谢该版本的所有贡献者。
